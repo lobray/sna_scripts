@@ -10,6 +10,10 @@ import pandas as pd
 
 import twitter_credentials
 
+
+# CHANGE SCRIPTS FILE BACK TO NORMAL!!!!!!!
+
+
 # SNA computer
 OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
 INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
@@ -18,6 +22,7 @@ CRAWLED_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_f
 USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
 CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_friends.csv"
 USER_FOLLOWER_RELATIONSHIPS = "/mnt/sdb1/leslie_results/data/user-follower.csv"
+
 FAILED_IDS = "/mnt/sdb1/leslie_results/data/failed_ids.csv"
 
 #Leslie's Computer
@@ -83,6 +88,8 @@ def dedupe_input_ids(new_ids, old_ids):
     for i in range(len(ids_to_crawl)):
         ids_to_crawl[i] = int(ids_to_crawl[i])
 
+
+
     return(ids_to_crawl)
 
 
@@ -94,13 +101,48 @@ def return_swiss_ids(input_ids, old_ids, user_df):
     Returns: list of ids that are in Switzerland and have not been crawled 
     '''
     ids_to_crawl = set(dedupe_input_ids(new_ids=input_ids, old_ids=old_ids))
+    swiss_places = ["svizzera", "switzerland", "schweiz", "suisse", "ch", "zurich", "bern", "geneva", "lausanne", "winterthur", "luzern", "st. gallen", "lugano", "basel", "biel", "bienne"]
     
-    swiss_users_info = user_df[user_df["lang"].isin(["en", "it", "de", "fr"]) & user_df["location"].isin(["Svizzera", "Switzerland", "Schweiz", "Suisse", "CH"])]
-    swiss_ids = set(np.array(swiss_users_info.loc[:, "id"]))
+    swiss_users_list = []
+
+    lang_df = user_df[user_df["lang"].isin(["en", "de", "fr", "it"])]
+    non_null_df = lang_df[-lang_df["location"].isna()]
+
+
+    
+    for user in non_null_df.index:
+        print(user)
+        loc = non_null_df["location"][user].lower()
+        tmp_loc = []
+        for i in range(len(swiss_places)):
+            tmp_loc.append(swiss_places[i] in loc)
+        if np.sum(np.array(tmp_loc)) > 0:
+            swiss_users_list.append(non_null_df["id"][user])
+        
+    
+
+
+
+        # print   (np.sum(swiss_places[i] in loc for i in range(len(swiss_places))))
+        # for i in range(len(swiss_places)):
+            # print(swiss_places[i] in loc)
+            # if swiss_places[i] in non_null_df["location"][user].lower():  
+              # print(non_null_df["location"][user])
+        #         swiss_users_list.append(non_null_df["id"][user])
+        #         print(swiss_users_list)
+        # if np.sum([([swiss_places[i] in non_null_df["location"][user].lower()]) for i in range(len(swiss_places))]>0):
+        # if np.sum([([swiss_places[i] in non_null_df["location"][user].lower()]) for i in range(len(swiss_places))]>0):
+        #     print(non_null_df.iloc[user,:])
+
+
+    swiss_ids = set(swiss_users_list)
+    
+    print(swiss_ids)
 
     new_swiss_ids = list(ids_to_crawl.intersection(swiss_ids))
     for i in range(len(new_swiss_ids)):
     	new_swiss_ids[i] = int(new_swiss_ids[i])
+
     return(new_swiss_ids)
 
 
@@ -129,7 +171,7 @@ def crawl_friends(user):
 if __name__ == '__main__':
     
     ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=CRAWLED_IDS, user_df = USER_INFO)
-    ids_to_crawl = seed_users
+    # ids_to_crawl = seed_users
 
     j = 0 
     num_failed = 0
