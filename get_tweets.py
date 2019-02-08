@@ -9,7 +9,7 @@ import twitter_credentials
 # specify whether you are looking for the tweet of a specific user, or a tweet of all the downloaded users
 SPECIFIC_ID = False
 ALL_IDS = True
-FILE = "/home/leslie/Desktop/SNA/user.csv"
+FILE = "/mnt/sdb1/leslie_results/data/user.csv"
 
 def get_all_tweets(user_id):
     '''

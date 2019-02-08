@@ -10,11 +10,17 @@ import pandas as pd
  
 import twitter_credentials
 
-OUTGOING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,0]
-INCOMING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,1]
-
+# SNA Computer
+OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
+INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
 INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
-OLD_USER_INFO_IDS =  np.array(pd.read_csv("/home/leslie/Desktop/SNA/user.csv"))[:,0]
+OLD_USER_INFO_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv"))[:,0]
+
+# Leslie's Computer
+# OUTGOING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,0]
+# INCOMING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,1]
+# INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
+# OLD_USER_INFO_IDS =  np.array(pd.read_csv("/home/leslie/Desktop/SNA/user.csv"))[:,0]
 
 
 def lookup_user_info(followers_id):

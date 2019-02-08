@@ -10,16 +10,25 @@ import pandas as pd
 
 import twitter_credentials
 
-OUTGOING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,0]
-INCOMING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,1]
-
+# SNA computer
+OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
+INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
 INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
-CRAWLED_IDS =  np.array(pd.read_csv("/home/leslie/Desktop/SNA/crawled_for_friends.csv", dtype=np.int64))[:,0]
-USER_INFO = pd.read_csv("/home/leslie/Desktop/SNA/user.csv")
+CRAWLED_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_friends.csv", dtype=np.int64))[:,0]
+USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
+CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_friends.csv"
+USER_FOLLOWER_RELATIONSHIPS = "/mnt/sdb1/leslie_results/data/user-follower.csv"
+FAILED_IDS = "/mnt/sdb1/leslie_results/data/failed_ids.csv"
 
-CRAWLED_ID_FILE = "/home/leslie/Desktop/SNA/crawled_for_friends.csv"
-USER_FOLLOWER_RELATIONSHIPS = "/home/leslie/Desktop/SNA/user-follower.csv"
-FAILED_IDS = "/home/leslie/Desktop/SNA/failed_ids.csv"
+#Leslie's Computer
+# OUTGOING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,0]
+# INCOMING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,1]
+# INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
+# CRAWLED_IDS =  np.array(pd.read_csv("/home/leslie/Desktop/SNA/crawled_for_friends.csv", dtype=np.int64))[:,0]
+# USER_INFO = pd.read_csv("/home/leslie/Desktop/SNA/user.csv")
+# CRAWLED_ID_FILE = "/home/leslie/Desktop/SNA/crawled_for_friends.csv"
+# USER_FOLLOWER_RELATIONSHIPS = "/home/leslie/Desktop/SNA/user-follower.csv"
+# FAILED_IDS = "/home/leslie/Desktop/SNA/failed_ids.csv"
 
 
 # # # # TWITTER CLIENT # # # #
