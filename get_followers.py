@@ -10,6 +10,7 @@ import pandas as pd
 
 import twitter_credentials
 
+# Leslie's computer
 INPUT_IDS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,1]
 CRAWLED_IDS =  np.array(pd.read_csv("/home/leslie/Desktop/SNA/crawled_for_followers.csv", dtype=np.int64))[:,0]
 USER_INFO = pd.read_csv("/home/leslie/Desktop/SNA/user.csv")
