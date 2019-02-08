@@ -78,13 +78,47 @@ def construct_data_frame(lists_of_user_objects):
     df['description'] = np.array([user.description.encode('utf-8', 'ignore').decode('utf-8') for user in lists_of_user_objects])  
 
     # Fix encoding issues (due to crazy characters in description)
-    for i in range(len(df)):
-        location_entry = df.loc[i,"location"]
-        name_entry = df.loc[i,"name"]
-        description_entry = df.loc[i,"description"]
-        df[i,"location"] = location_entry.encode('utf-8', 'ignore').decode('utf-8')
-        df[i, "name"] = name_entry.encode('utf-8', 'ignore').decode('utf-8')
-        df[i, "description"] = description_entry.encode('utf-8', 'ignore').decode('utf-8')
+    # for i in range(len(df)):
+    #     location_entry = df.loc[i,"location"]
+    #     name_entry = df.loc[i,"name"]
+    #     description_entry = df.loc[i,"description"]
+    #     df[i,"location"] = location_entry.encode('utf-8', 'ignore').decode('utf-8')
+    #     df[i, "name"] = name_entry.encode('utf-8', 'ignore').decode('utf-8')
+    #     df[i, "description"] = description_entry.encode('utf-8', 'ignore').decode('utf-8')
+
+    return(df)
+
+def construct_simplified_data_frame(lists_of_user_objects):
+    '''
+    Constructs a data frame of the relevant attributes from the Twitter user objects.
+
+    Args: a list of Twitter User objects
+    Returns: Pandas DataFrame of the desired attributes from all user objects 
+    '''
+    df = pd.DataFrame(data=[user.id for user in lists_of_user_objects], columns=['id'])
+    df['id_str'] = np.array([user.id_str.encode('utf-8', 'ignore').decode('utf-8') for user in lists_of_user_objects])
+    df['location'] = np.array([user.location.encode('utf-8', 'ignore').decode('utf-8') for user in lists_of_user_objects])
+    df['lang'] = np.array([user.lang for user in lists_of_user_objects])
+    df['screen_name'] = np.array([user.screen_name for user in lists_of_user_objects])
+    df['verified'] = np.array([user.verified for user in lists_of_user_objects])
+    df['followers_count'] = np.array([user.followers_count for user in lists_of_user_objects])
+    df['friends_count'] = np.array([user.friends_count for user in lists_of_user_objects])  
+    df['created_at'] = np.array([user.created_at for user in lists_of_user_objects])
+    df['favourites_count'] = np.array([user.favourites_count for user in lists_of_user_objects])
+    df['geo_enabled'] = np.array([user.geo_enabled for user in lists_of_user_objects])
+    df['listed_count'] = np.array([user.listed_count for user in lists_of_user_objects])
+    df['name'] = np.array([user.name.encode('utf-8', 'ignore').decode('utf-8') for user in lists_of_user_objects])
+    df['protected'] = np.array([user.protected for user in lists_of_user_objects])
+    df['statuses_count'] = np.array([user.statuses_count for user in lists_of_user_objects])    
+
+    # Fix encoding issues (due to crazy characters in description)
+    # for i in range(len(df)):
+    #     print(df.loc[i,:])
+    #     location_entry = df.loc[i,"location"]
+    #     name_entry = df.loc[i,"name"]
+    #     df[i,"location"] = location_entry.encode('utf-8', 'ignore').decode('utf-8')
+    #     df[i, "name"] = name_entry.encode('utf-8', 'ignore').decode('utf-8')
+
 
     return(df)
 
@@ -110,15 +144,18 @@ def dedupe_input_ids(new_ids, old_ids):
 if __name__ == '__main__':
     
     # if seed user, input the ids as a list into the variable new_users. 
-    seed_users = [15786941, 214032204, 27655533, 492113869, 3197731816]
-    new_users = seed_users
-    
+    # seed_users = [15786941, 214032204, 27655533, 492113869, 3197731816]
     # new_users = seed_users
-    # new_users = dedupe_input_ids(new_ids=INPUT_IDS, old_ids=OLD_USER_INFO_IDS)
+    
+    new_users = dedupe_input_ids(new_ids=INPUT_IDS, old_ids=OLD_USER_INFO_IDS)
     new_users_objects = lookup_user_info(new_users)
-    df = construct_data_frame(new_users_objects)    
+    df = construct_data_frame(new_users_objects)   
+    simplified_df = construct_simplified_data_frame(new_users_objects)    
 
-    with open("/home/leslie/Desktop/SNA/user_geo_test.csv", 'a+') as f:
+    with open("/mnt/sdb1/leslie_results/data/user.csv", 'a+') as f:
+        simplified_df.to_csv(f, header=False, index=False, encoding='utf-8')
+
+    with open("/mnt/sdb1/leslie_results/data/full_user.csv", 'a+') as f:
         df.to_csv(f, header=False, index=False, encoding='utf-8')
    
 

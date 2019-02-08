@@ -126,9 +126,10 @@ def crawl_followers(user):
 if __name__ == '__main__':
     
     # if starting with influential seed nodes, reassign ids_to_crawl as the seed seed_users
-    seed_users = [214032204, 27655533, 492113869, 3197731816, 15786941]
+    # seed_users = [214032204, 27655533, 492113869, 3197731816, 15786941]
+    test_users = [123456789]
     # ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=CRAWLED_IDS, user_df = USER_INFO)
-    ids_to_crawl = seed_users
+    ids_to_crawl = test_users
 
     j = 0 
     num_failed = 0
