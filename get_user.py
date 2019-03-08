@@ -39,20 +39,22 @@ def lookup_user_info(followers_id):
 
     full_users = []
     users_count = len(followers_id)
-    while True:
-         try:
-             for i in range((users_count / 100) + 1):    
-                 full_users.extend(api.lookup_users(user_ids=followers_id[i*100:min((i+1)*100, users_count)]))
-                 print('getting users batch:', i)
-                 print("=========================================")
-                 time.sleep(1)
-
-         except tweepy.TweepError as e:
-             print('Something went wrong, quitting...', i)
-             print("time of error:", datetime.datetime.now())  
-             time.sleep(15 * 60)
+    # while True:
          
-         return(full_users)
+    for i in range((users_count / 100) + 1):    
+        try:
+             
+            full_users.extend(api.lookup_users(user_ids=followers_id[i*100:min((i+1)*100, users_count)]))
+            print('getting users batch:', i)
+            print("=========================================")
+            time.sleep(1)
+
+        except tweepy.TweepError as e:
+            print('Something went wrong, quitting...', i)
+            print("time of error:", datetime.datetime.now())  
+            time.sleep(15 * 60)
+         
+    return(full_users)
 
 
 def construct_data_frame(lists_of_user_objects):
@@ -160,6 +162,8 @@ if __name__ == '__main__':
 
     with open("/mnt/sdb1/leslie_results/data/full_user.csv", 'a+') as f:
         df.to_csv(f, header=False, index=False, encoding='utf-8')
+
+    print(datetime.datetime.now())    
    
 
     

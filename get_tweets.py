@@ -62,7 +62,7 @@ def return_swiss_ids(input_ids, old_ids, user_df):
             tmp_loc.append(swiss_places[i] in loc)
         if np.sum(np.array(tmp_loc)) > 0:
             # add in extra condition that status count needs to be greater than zero
-            if non_null_df["statuses_count"][user] > 0:
+            if non_null_df["statuses_count"][user] > 1:
                 # add in condition that tweets are not protected
                 if non_null_df["protected"][user] == False:
                     swiss_users_list.append(non_null_df["id_str"][user])
@@ -102,8 +102,8 @@ def get_all_tweets(user_id):
     alltweets.extend(new_tweets)
     
     #save the id of the oldest tweet less one
+    print("oldest", alltweets[-1].id)
     oldest = alltweets[-1].id - 1
-    print(alltweets[-1].id)
     
     #keep grabbing tweets until there are no tweets left to grab
     while len(new_tweets) > 0:
@@ -172,6 +172,6 @@ if __name__ == '__main__':
             current_user = int(ids_to_crawl[i])
             print(i, len(ids_to_crawl), current_user)
             get_all_tweets(current_user)
-            time.sleep(1)
-            print(datetime.datetime.now())
+            time.sleep(3)
+    print(datetime.datetime.now())        
     
