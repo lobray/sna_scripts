@@ -3,6 +3,8 @@ import csv
 import pandas as pd
 import numpy as np
 import json
+import time
+import datetime
 
 import twitter_credentials
 
@@ -101,6 +103,7 @@ def get_all_tweets(user_id):
     
     #save the id of the oldest tweet less one
     oldest = alltweets[-1].id - 1
+    print(alltweets[-1].id)
     
     #keep grabbing tweets until there are no tweets left to grab
     while len(new_tweets) > 0:
@@ -119,7 +122,7 @@ def get_all_tweets(user_id):
 
 
     # outtweets = [[tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
-    full_tweets = [[user_id, tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
+    full_tweets = [[str(user_id), tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
 
     # outtweets = [[tweet.id_str, tweet.created_at, tweet.fulltext.encode("utf-8"), tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
     # full_tweets = [[user_id, tweet.id_str, tweet.created_at, tweet.fulltext.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
@@ -170,4 +173,5 @@ if __name__ == '__main__':
             print(i, len(ids_to_crawl), current_user)
             get_all_tweets(current_user)
             time.sleep(1)
+            print(datetime.datetime.now())
     

@@ -7,6 +7,7 @@ import tweepy
 import time
 import numpy as np
 import pandas as pd
+import datetime
 
 import twitter_credentials
 
@@ -61,6 +62,10 @@ class TwitterClient():
             print("page", page)
             print("Length of stored friend ids for this user:", len(store_friend_ids))
             time.sleep(60)
+
+        for i in range(len(store_friend_ids)):
+            store_friend_ids[i] = str(store_friend_ids[i])
+
         return(store_friend_ids)
 
 
@@ -87,8 +92,6 @@ def dedupe_input_ids(new_ids, old_ids):
     # convert to integer
     for i in range(len(ids_to_crawl)):
         ids_to_crawl[i] = int(ids_to_crawl[i])
-
-
 
     return(ids_to_crawl)
 
@@ -156,7 +159,7 @@ def crawl_friends(user):
     '''
     friends = twitter_client.get_friend_ids(5000)
     # note that here results in inverted (friends:account) in order to preserve continuity of the user-follower relationship csv
-    results = pd.DataFrame({0: friends, 1: [user] * len(friends)})
+    results = pd.DataFrame({0: friends, 1: [str(user)] * len(friends)})
     
     # Add this user id to the list of ids that have been crawled
     with open(CRAWLED_ID_FILE, 'a+') as f:
@@ -179,6 +182,7 @@ if __name__ == '__main__':
     for i in range(len(ids_to_crawl)):
         id = ids_to_crawl[i]
         print(id)
+        print(datetime.datetime.now())
         
         try:
             twitter_client = TwitterClient(id)

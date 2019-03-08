@@ -54,6 +54,10 @@ class TwitterClient():
             print("page", page)
             print("Length of stored follower ids for this user:", len(store_follower_ids))
             time.sleep(60)
+
+        for i in range(len(store_follower_ids)):
+            store_follower_ids[i] = str(store_follower_ids[i])
+
         return(store_follower_ids)
 
 
@@ -111,7 +115,7 @@ def crawl_followers(user):
     Returns: list of ids that follow the input user 
     '''
     followers = twitter_client.get_follower_ids(5000)
-    results = pd.DataFrame({0: [user] * len(followers), 1: followers})
+    results = pd.DataFrame({0: [str(user)] * len(followers), 1: followers})
     
     # Add this user id to the list of ids that have been crawled
     with open(CRAWLED_ID_FILE, 'a+') as f:
@@ -137,6 +141,7 @@ if __name__ == '__main__':
     for i in range(len(ids_to_crawl)):
         id = ids_to_crawl[i]
         print(id)
+        print(datetime.datetime.now())
         
         try:
             twitter_client = TwitterClient(id)

@@ -7,6 +7,7 @@ import tweepy
 import time
 import numpy as np 
 import pandas as pd 
+import datetime
  
 import twitter_credentials
 
@@ -48,6 +49,7 @@ def lookup_user_info(followers_id):
 
          except tweepy.TweepError as e:
              print('Something went wrong, quitting...', i)
+             print("time of error:", datetime.datetime.now())  
              time.sleep(15 * 60)
          
          return(full_users)
@@ -150,7 +152,8 @@ if __name__ == '__main__':
     new_users = dedupe_input_ids(new_ids=INPUT_IDS, old_ids=OLD_USER_INFO_IDS)
     new_users_objects = lookup_user_info(new_users)
     df = construct_data_frame(new_users_objects)   
-    simplified_df = construct_simplified_data_frame(new_users_objects)    
+    simplified_df = construct_simplified_data_frame(new_users_objects)
+    print(datetime.datetime.now())    
 
     with open("/mnt/sdb1/leslie_results/data/user.csv", 'a+') as f:
         simplified_df.to_csv(f, header=False, index=False, encoding='utf-8')
