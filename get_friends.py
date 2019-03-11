@@ -12,9 +12,6 @@ import datetime
 import twitter_credentials
 
 
-# CHANGE SCRIPTS FILE BACK TO NORMAL!!!!!!!
-
-
 # SNA computer
 # OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
 # INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
