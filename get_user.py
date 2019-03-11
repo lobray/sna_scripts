@@ -37,24 +37,32 @@ def lookup_user_info(followers_id):
     auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth)
 
-    full_users = []
+    # full_users = []
     users_count = len(followers_id)
-    # while True:
+    while True:
          
-    for i in range((users_count / 100) + 1):    
-        try:
-             
-            full_users.extend(api.lookup_users(user_ids=followers_id[i*100:min((i+1)*100, users_count)]))
-            print('getting users batch:', i)
-            print("=========================================")
-            time.sleep(1)
+        for i in range((users_count / 100) + 1):    
+            full_users = []
+            try:
+                 
+                full_users.extend(api.lookup_users(user_ids=followers_id[i*100:min((i+1)*100, users_count)]))
+                print('getting users batch:', i)
+                print("=========================================")
+                df = construct_data_frame(full_users)   
+                simplified_df = construct_simplified_data_frame(full_users)
+                with open("/mnt/sdb1/leslie_results/data/user.csv", 'a+') as f:
+                    simplified_df.to_csv(f, header=False, index=False, encoding='utf-8')
 
-        except tweepy.TweepError as e:
-            print('Something went wrong, quitting...', i)
-            print("time of error:", datetime.datetime.now())  
-            time.sleep(15 * 60)
+                with open("/mnt/sdb1/leslie_results/data/full_user.csv", 'a+') as f:
+                    df.to_csv(f, header=False, index=False, encoding='utf-8')
+                time.sleep(1)
+
+            except tweepy.TweepError as e:
+                print('Something went wrong, quitting...', i)
+                print("time of error:", datetime.datetime.now())  
+                time.sleep(15 * 60)
          
-    return(full_users)
+        return(full_users)
 
 
 def construct_data_frame(lists_of_user_objects):
@@ -153,15 +161,15 @@ if __name__ == '__main__':
     
     new_users = dedupe_input_ids(new_ids=INPUT_IDS, old_ids=OLD_USER_INFO_IDS)
     new_users_objects = lookup_user_info(new_users)
-    df = construct_data_frame(new_users_objects)   
-    simplified_df = construct_simplified_data_frame(new_users_objects)
+    # df = construct_data_frame(new_users_objects)   
+    # simplified_df = construct_simplified_data_frame(new_users_objects)
     print(datetime.datetime.now())    
 
-    with open("/mnt/sdb1/leslie_results/data/user.csv", 'a+') as f:
-        simplified_df.to_csv(f, header=False, index=False, encoding='utf-8')
+    # with open("/mnt/sdb1/leslie_results/data/user.csv", 'a+') as f:
+    #     simplified_df.to_csv(f, header=False, index=False, encoding='utf-8')
 
-    with open("/mnt/sdb1/leslie_results/data/full_user.csv", 'a+') as f:
-        df.to_csv(f, header=False, index=False, encoding='utf-8')
+    # with open("/mnt/sdb1/leslie_results/data/full_user.csv", 'a+') as f:
+    #     df.to_csv(f, header=False, index=False, encoding='utf-8')
 
     print(datetime.datetime.now())    
    

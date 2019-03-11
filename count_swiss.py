@@ -45,7 +45,7 @@ def count_swiss_ids(input_ids, user_df):
 
                     swiss_users_list.append(non_null_df["id_str"][user])
                     
-                    if non_null_df["statuses_count"][user] > 3200:
+                    if non_null_df["statuses_count"][user] == 1:
                         too_many_tweets += 1
 
     swiss_ids = set(swiss_users_list)
