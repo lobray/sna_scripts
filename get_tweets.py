@@ -91,68 +91,71 @@ def get_all_tweets(user_id):
     auth = tweepy.OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
     auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth)
+          
     
-    #initialize a list to hold all the tweepy Tweets
-    alltweets = []    
-    
-    #make initial request for most recent tweets (200 is the maximum allowed count)
-    new_tweets = api.user_timeline(user_id = user_id, count=200, tweet_mode = "extended")
-    
-    #save most recent tweets
-    alltweets.extend(new_tweets)
-    
-    #save the id of the oldest tweet less one
-    print("oldest", alltweets[-1].id)
-    oldest = alltweets[-1].id - 1
-    
-    #keep grabbing tweets until there are no tweets left to grab
-    while len(new_tweets) > 0:
-        print("getting tweets before %s" % (oldest))
-        
-        #all subsiquent requests use the max_id param to prevent duplicates
-        new_tweets = api.user_timeline(user_id = user_id, count=200, max_id=oldest, tweet_mode="extended")
+    try:
+
+        #initialize a list to hold all the tweepy Tweets
+        alltweets = []
+        #make initial request for most recent tweets (200 is the maximum allowed count)
+        new_tweets = api.user_timeline(user_id = user_id, count=200, tweet_mode = "extended")
         
         #save most recent tweets
         alltweets.extend(new_tweets)
         
-        #update the id of the oldest tweet less one
+        #save the id of the oldest tweet less one
+        print("oldest", alltweets[-1].id)
         oldest = alltweets[-1].id - 1
+
+        #keep grabbing tweets until there are no tweets left to grab
+        while len(new_tweets) > 0:
+            print("getting tweets before %s" % (oldest))
+            
+            #all subsiquent requests use the max_id param to prevent duplicates
+            new_tweets = api.user_timeline(user_id = user_id, count=200, max_id=oldest, tweet_mode="extended")
+            
+            #save most recent tweets
+            alltweets.extend(new_tweets)
+            
+            #update the id of the oldest tweet less one
+            oldest = alltweets[-1].id - 1
+            
+            print("...%s tweets downloaded so far" % (len(alltweets)))
+
+
+        # outtweets = [[tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
+        full_tweets = [[str(user_id), tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
+
+        # outtweets = [[tweet.id_str, tweet.created_at, tweet.fulltext.encode("utf-8"), tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
+        # full_tweets = [[user_id, tweet.id_str, tweet.created_at, tweet.fulltext.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
+
+        # extract hashtag and add into list
+        for i in range(len(full_tweets)):
+            if len(full_tweets[i][5]["hashtags"]) > 0:
+                number_hashtags = len(full_tweets[i][5]["hashtags"])
+                hashtag_list = []
+                for j in range(number_hashtags):
+                    new_hashtag = full_tweets[i][5]["hashtags"][j]["text"].encode("utf-8")
+                    hashtag_list.append(new_hashtag)
+
+                full_tweets[i][4] = hashtag_list
+                # print(full_tweets[i][5]["hashtags"])
+
+
         
-        print("...%s tweets downloaded so far" % (len(alltweets)))
+        # write the csv per user    
+        # with open('/mnt/sdb1/leslie_results/data/tweets/%s_tweets.csv' % user_id, 'wb') as f:
+        #     writer = csv.writer(f)
+        #     writer.writerow(["id_str", "created_at", "text", "entities", "retweet_count", "favorite_count", "place", "coordinates"])
+        #     writer.writerows(outtweets)
 
-
-    # outtweets = [[tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
-    full_tweets = [[str(user_id), tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
-
-    # outtweets = [[tweet.id_str, tweet.created_at, tweet.fulltext.encode("utf-8"), tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
-    # full_tweets = [[user_id, tweet.id_str, tweet.created_at, tweet.fulltext.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
-
-    # extract hashtag and add into list
-    for i in range(len(full_tweets)):
-        if len(full_tweets[i][5]["hashtags"]) > 0:
-            number_hashtags = len(full_tweets[i][5]["hashtags"])
-            hashtag_list = []
-            for j in range(number_hashtags):
-                new_hashtag = full_tweets[i][5]["hashtags"][j]["text"].encode("utf-8")
-                hashtag_list.append(new_hashtag)
-
-            full_tweets[i][4] = hashtag_list
-            # print(full_tweets[i][5]["hashtags"])
-
-
+        #write the tweet file csv    
+        with open('/mnt/sdb1/leslie_results/data/all_tweets.csv', 'a+') as g:
+            writer = csv.writer(g)
+            writer.writerows(full_tweets)
     
-    # write the csv per user    
-    # with open('/mnt/sdb1/leslie_results/data/tweets/%s_tweets.csv' % user_id, 'wb') as f:
-    #     writer = csv.writer(f)
-    #     writer.writerow(["id_str", "created_at", "text", "entities", "retweet_count", "favorite_count", "place", "coordinates"])
-    #     writer.writerows(outtweets)
-
-    #write the tweet file csv    
-    with open('/mnt/sdb1/leslie_results/data/all_tweets.csv', 'a+') as g:
-        writer = csv.writer(g)
-        writer.writerows(full_tweets)
-    
-    pass
+    except:
+        pass
 
 
 if __name__ == '__main__':

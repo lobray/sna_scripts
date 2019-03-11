@@ -61,6 +61,7 @@ def lookup_user_info(followers_id):
                 print('Something went wrong, quitting...', i)
                 print("time of error:", datetime.datetime.now())  
                 time.sleep(15 * 60)
+                pass
          
         return(full_users)
 

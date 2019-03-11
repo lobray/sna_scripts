@@ -16,9 +16,13 @@ import twitter_credentials
 
 
 # SNA computer
-OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
-INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
-INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
+# OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
+# INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
+# INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
+
+# SECOND LEVEL SEEDS (SINCE COMPUTER RESTARTED, NEEDED TO ADJUST THIS)
+INPUT_IDS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/second_level_seeds.csv", dtype=np.int64))[:,0]
+
 CRAWLED_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_friends.csv", dtype=np.int64))[:,0]
 USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
 CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_friends.csv"
