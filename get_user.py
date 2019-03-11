@@ -150,7 +150,7 @@ def dedupe_input_ids(new_ids, old_ids):
 
     # convert to integer
     for i in range(len(ids_to_crawl)):
-        ids_to_crawl[i] = int(ids_to_crawl[i])
+        ids_to_crawl[i] = np.int64(ids_to_crawl[i])
     return(ids_to_crawl)
 
 

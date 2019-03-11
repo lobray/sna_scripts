@@ -92,7 +92,7 @@ def dedupe_input_ids(new_ids, old_ids):
 
     # convert to integer
     for i in range(len(ids_to_crawl)):
-        ids_to_crawl[i] = int(ids_to_crawl[i])
+        ids_to_crawl[i] = np.int64(ids_to_crawl[i])
 
     return(ids_to_crawl)
 
@@ -145,7 +145,7 @@ def return_swiss_ids(input_ids, old_ids, user_df):
 
     new_swiss_ids = list(ids_to_crawl.intersection(swiss_ids))
     for i in range(len(new_swiss_ids)):
-    	new_swiss_ids[i] = int(new_swiss_ids[i])
+    	new_swiss_ids[i] = np.int64(new_swiss_ids[i])
 
     return(new_swiss_ids)
 

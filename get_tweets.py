@@ -172,7 +172,7 @@ if __name__ == '__main__':
         ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=PREVIOUSLY_GOT_TWEETS, user_df = USER_INFO)
         
         for i in range(len(ids_to_crawl)):
-            current_user = int(ids_to_crawl[i])
+            current_user = np.int64(ids_to_crawl[i])
             print(i, len(ids_to_crawl), current_user)
             get_all_tweets(current_user)
             time.sleep(3)
