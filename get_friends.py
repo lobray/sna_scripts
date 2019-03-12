@@ -123,7 +123,7 @@ def return_swiss_ids(input_ids, old_ids, user_df):
             tmp_loc.append(swiss_places[i] in loc)
         if np.sum(np.array(tmp_loc)) > 0:
             if non_null_df["protected"][user] == False:
-                swiss_users_list.append(non_null_df["id"][user])
+                swiss_users_list.append(non_null_df["id_str"][user])
         
     
 
