@@ -166,7 +166,7 @@ def crawl_friends(user):
     
     # Add this user id to the list of ids that have been crawled
     with open(CRAWLED_ID_FILE, 'a+') as f:
-        user_id = pd.DataFrame(data=[user])
+        user_id = pd.DataFrame(data=[str(user)])
         user_id.to_csv(f, header=False, index=False)
 
     # Add follow relationships to the relationships csv for that language
