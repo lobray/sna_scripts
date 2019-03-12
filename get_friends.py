@@ -99,7 +99,7 @@ def dedupe_input_ids(new_ids, old_ids):
 
 def return_swiss_ids(input_ids, old_ids, user_df):
     '''
-    Function to find which users are located in Switzerland.
+    Function to find which users are located in Switzerland. Make sure account isn't protected.
 
     Args: input_ids should be the output from deduped list
     Returns: list of ids that are in Switzerland and have not been crawled 
@@ -113,6 +113,7 @@ def return_swiss_ids(input_ids, old_ids, user_df):
     non_null_df = lang_df[-lang_df["location"].isna()]
 
 
+
     
     for user in non_null_df.index:
         print(user)
@@ -121,7 +122,8 @@ def return_swiss_ids(input_ids, old_ids, user_df):
         for i in range(len(swiss_places)):
             tmp_loc.append(swiss_places[i] in loc)
         if np.sum(np.array(tmp_loc)) > 0:
-            swiss_users_list.append(non_null_df["id"][user])
+            if non_null_df["protected"][user] == False:
+                swiss_users_list.append(non_null_df["id"][user])
         
     
 
