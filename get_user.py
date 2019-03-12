@@ -15,7 +15,7 @@ import twitter_credentials
 OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
 INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
 INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
-OLD_USER_INFO_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv"))[:,0]
+OLD_USER_INFO_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv"))[:,1]
 
 # Leslie's Computer
 # OUTGOING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,0]
@@ -151,6 +151,7 @@ def dedupe_input_ids(new_ids, old_ids):
     # convert to integer
     for i in range(len(ids_to_crawl)):
         ids_to_crawl[i] = np.int64(ids_to_crawl[i])
+    print("number of new ids to crawl:", len(ids_to_crawl))
     return(ids_to_crawl)
 
 
