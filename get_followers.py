@@ -7,17 +7,18 @@ import tweepy
 import time
 import numpy as np
 import pandas as pd
+import datetime
 
-import twitter_credentials
+import twitter_credentials_2
 
 
 # SNA computer
-INPUT_IDS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
-CRAWLED_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_followers.csv", dtype=np.int64))[:,0]
-USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
-CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_followers.csv"
-USER_FOLLOWER_RELATIONSHIPS = "/mnt/sdb1/leslie_results/data/user-follower.csv"
-FAILED_IDS = "/mnt/sdb1/leslie_results/data/failed_ids.csv"
+# INPUT_IDS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
+# CRAWLED_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_followers2.csv", dtype=np.int64))[:,0]
+# USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
+CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_followers2.csv"
+USER_FOLLOWER_RELATIONSHIPS = "/mnt/sdb1/leslie_results/data/user-follower2.csv"
+FAILED_IDS = "/mnt/sdb1/leslie_results/data/failed_ids2.csv"
 
 
 # Leslie's computer
@@ -65,8 +66,8 @@ class TwitterClient():
 class TwitterAuthenticator():
 
     def authenticate_twitter_app(self):
-        auth = OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
-        auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKEN_SECRET)
+        auth = OAuthHandler(twitter_credentials_2.CONSUMER_KEY, twitter_credentials_2.CONSUMER_SECRET)
+        auth.set_access_token(twitter_credentials_2.ACCESS_TOKEN, twitter_credentials_2.ACCESS_TOKEN_SECRET)
         return(auth) 
 
 
@@ -115,6 +116,7 @@ def crawl_followers(user):
     Returns: list of ids that follow the input user 
     '''
     followers = twitter_client.get_follower_ids(5000)
+
     results = pd.DataFrame({0: [str(user)] * len(followers), 1: followers})
     
     # Add this user id to the list of ids that have been crawled
@@ -130,10 +132,10 @@ def crawl_followers(user):
 if __name__ == '__main__':
     
     # if starting with influential seed nodes, reassign ids_to_crawl as the seed seed_users
-    # seed_users = [214032204, 27655533, 492113869, 3197731816, 15786941]
-    test_users = [123456789]
+    seed_users = [214032204, 27655533, 492113869, 3197731816, 15786941]
+    # test_users = [123456789]
     # ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=CRAWLED_IDS, user_df = USER_INFO)
-    ids_to_crawl = test_users
+    ids_to_crawl = seed_users
 
     j = 0 
     num_failed = 0
@@ -158,6 +160,6 @@ if __name__ == '__main__':
 
             # Append the failed id to the Failed Ids csv, then wait one minute before trying the next ID
             with open(FAILED_IDS, 'a+') as f:
-                failed = pd.DataFrame(data=[id])
+                failed = pd.DataFrame(data=[str(id)])
                 failed.to_csv(f, header=False, index=False)
             time.sleep(60)
