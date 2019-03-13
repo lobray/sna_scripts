@@ -2,12 +2,12 @@ import pandas as pandas
 import numpy as np
 from searchtweets import ResultStream, gen_rule_payload, load_credentials
 from searchtweets import collect_results
+import csv
 
 import twitter_credentials
 
 premium_search_args = load_credentials("~/.twitter_keys.yaml",
                                        account_type="premium")
-
 
 
 rule = gen_rule_payload("selbstbestimmungsinitiative",
@@ -17,13 +17,6 @@ rule = gen_rule_payload("selbstbestimmungsinitiative",
 
 print(rule)
 
-# tweets = collect_results(rule,
-#                          max_results=100,
-#                          result_stream_args=premium_search_args) # change this if you need to - is this only for counts
-# aaaaaaaaaaaaaaaaaa
-# for tweet in tweets[0:10]:
-#   print(tweet.all_text) 
-# [print(tweet.generator.get("name")) for tweet in tweets[0:10]]
 # # HOW DOES THIS WORK WTIH PAGINATION?
 
 rs = ResultStream(rule_payload=rule,
@@ -34,24 +27,15 @@ rs = ResultStream(rule_payload=rule,
 
 print(rs)
 
-print(type(rs))
-print(dir(rs))
-
-
 tweets = list(rs.stream())
-print(len(tweets))
+  
+
 
 # using unidecode to prevent emoji/accents printing
-for tweet in tweets[0:100]:
-  print(tweet.all_text) 
+full_tweets = [[tweet.all_text, tweet.created_at_datetime, tweet.created_at_string, tweet.hashtags, tweet.id, tweet.lang, tweet.screen_name, tweet.profile_location, tweet.retweet_count, tweet.favorite_count, tweet.text, tweet.tweet_type, tweet.user_id] for tweet in tweets]
+
+with open('/mnt/sdb1/leslie_results/data/sbi.csv', 'a+') as g:
+  writer = csv.writer(g)
+  writer.writerows(full_tweets)
 
 
-
-# {'username': '<MY_USERNAME>',
-#  'password': '<MY_PASSWORD>',
-#  'endpoint': '<MY_ENDPOINT>'}
-
-
-# {'bearer_token': '<A_VERY_LONG_MAGIC_STRING>',
-#  'endpoint': 'https://api.twitter.com/1.1/tweets/search/30day/dev.json',
-#  'extra_headers_dict': None}
