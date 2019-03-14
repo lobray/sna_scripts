@@ -32,7 +32,7 @@ tweets = list(rs.stream())
 
 
 # using unidecode to prevent emoji/accents printing
-full_tweets = [[tweet.all_text, tweet.created_at_datetime, tweet.created_at_string, tweet.hashtags, tweet.id, tweet.lang, tweet.screen_name, tweet.profile_location, tweet.retweet_count, tweet.favorite_count, tweet.text, tweet.tweet_type, tweet.user_id] for tweet in tweets]
+full_tweets = [[tweet.user_id, tweet.id, tweet.all_text, tweet.created_at_datetime, tweet.created_at_string, tweet.hashtags, tweet.tweet_type, tweet.lang, tweet.screen_name, tweet.profile_location, tweet.retweet_count, tweet.favorite_count, tweet.text] for tweet in tweets]
 
 with open('/mnt/sdb1/leslie_results/data/sbi.csv', 'a+') as g:
   writer = csv.writer(g)
