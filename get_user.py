@@ -13,8 +13,8 @@ import twitter_credentials
 from common_functions import *
 
 # SNA Computer
-OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
-INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
+OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv"))[:,0]
+INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv"))[:,1]
 INPUT_IDS = set(np.concatenate((OUTGOING_LINKS, INCOMING_LINKS)))
 OLD_USER_INFO_IDS =  set(np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv"))[:,1])
 

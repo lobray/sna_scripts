@@ -52,7 +52,7 @@ def return_swiss_ids(input_ids, old_ids, user_df):
     Args: input_ids should be the output from deduped list
     Returns: list of ids that are in Switzerland and have not been crawled 
     '''
-    # user_df.drop_duplicates(subset="id_str", keep="first", inplace=True)
+    user_df.drop_duplicates(subset="id_str", keep="first", inplace=True)
 
     ids_to_crawl = set(dedupe_input_ids(new_ids=input_ids, old_ids=old_ids))
     swiss_places = ["svizzera", "switzerland", "schweiz", "suisse", "swiss", ", ch", "zurich", "zuerich", "bern", "geneva", "geneve", "lausanne", "winterthur", "luzern", "st. gallen", "st.gallen", "lugano", "basel", "biel", "bienne", "zug", "aarau"]
