@@ -9,25 +9,17 @@ import numpy as np
 import pandas as pd
 import datetime
 
-import twitter_credentials_2
+import twitter_credentials
+from common_functions import *
 
 
-# SNA computer
-# INPUT_IDS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
-# CRAWLED_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_followers2.csv", dtype=np.int64))[:,0]
-# USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
-CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_followers2.csv"
-USER_FOLLOWER_RELATIONSHIPS = "/mnt/sdb1/leslie_results/data/user-follower2.csv"
-FAILED_IDS = "/mnt/sdb1/leslie_results/data/failed_ids2.csv"
+INPUT_IDS = np.array([214032204, 27655533, 492113869, 3197731816, 15786941])
+USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
+CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_followers.csv"
+USER_FOLLOWER_RELATIONSHIPS = "/mnt/sdb1/leslie_results/data/user-follower.csv"
+FAILED_IDS = "/mnt/sdb1/leslie_results/data/failed_ids.csv"
+CRAWLED_IDS =  np.array(pd.read_csv(CRAWLED_ID_FILE, dtype=np.int64))[:,0]
 
-
-# Leslie's computer
-# INPUT_IDS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,1]
-# CRAWLED_IDS =  np.array(pd.read_csv("/home/leslie/Desktop/SNA/crawled_for_followers.csv", dtype=np.int64))[:,0]
-# USER_INFO = pd.read_csv("/home/leslie/Desktop/SNA/user.csv")
-# CRAWLED_ID_FILE = "/home/leslie/Desktop/SNA/crawled_for_followers.csv"
-# USER_FOLLOWER_RELATIONSHIPS = "/home/leslie/Desktop/SNA/user-follower.csv"
-# FAILED_IDS = "/home/leslie/Desktop/SNA/failed_ids.csv"
 
 
 # # # # TWITTER CLIENT # # # #
@@ -66,45 +58,9 @@ class TwitterClient():
 class TwitterAuthenticator():
 
     def authenticate_twitter_app(self):
-        auth = OAuthHandler(twitter_credentials_2.CONSUMER_KEY, twitter_credentials_2.CONSUMER_SECRET)
-        auth.set_access_token(twitter_credentials_2.ACCESS_TOKEN, twitter_credentials_2.ACCESS_TOKEN_SECRET)
+        auth = OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
+        auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKEN_SECRET)
         return(auth) 
-
-
-def dedupe_input_ids(new_ids, old_ids):
-    '''
-    Takes input ids and checks against the list of previously crawled ids to prevent crawling the same node twice.
-
-    Args: new ids to consider and old ids already crawled
-    Returns: list of IDs to crawl
-    '''
-    new_input_ids = set(new_ids)
-    previously_crawled_ids = set(old_ids)
-    ids_to_crawl = list(new_input_ids - previously_crawled_ids)
-
-    # convert to integer
-    for i in range(len(ids_to_crawl)):
-        ids_to_crawl[i] = np.int64(ids_to_crawl[i])
-
-    return(ids_to_crawl)
-
-
-def return_swiss_ids(input_ids, old_ids, user_df):
-    '''
-    Function to find which users are located in Switzerland.
-
-    Args: input_ids should be the output from deduped list
-    Returns: list of ids that are in Switzerland and have not been crawled 
-    '''
-    ids_to_crawl = set(dedupe_input_ids(new_ids=input_ids, old_ids=old_ids))
-    
-    swiss_users_info = user_df[user_df["lang"].isin(["en", "it", "de", "fr"]) & user_df["location"].isin(["Svizzera", "Switzerland", "Schweiz", "Suisse", "CH"])]
-    swiss_ids = set(np.array(swiss_users_info.loc[:, "id"]))
-
-    new_swiss_ids = list(ids_to_crawl.intersection(swiss_ids))
-    for i in range(len(new_swiss_ids)):
-    	new_swiss_ids[i] = np.int64(new_swiss_ids[i])
-    return(new_swiss_ids)
 
 
 def crawl_followers(user):
@@ -131,11 +87,9 @@ def crawl_followers(user):
 
 if __name__ == '__main__':
     
-    # if starting with influential seed nodes, reassign ids_to_crawl as the seed seed_users
-    seed_users = [214032204, 27655533, 492113869, 3197731816, 15786941]
-    # test_users = [123456789]
-    # ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=CRAWLED_IDS, user_df = USER_INFO)
-    ids_to_crawl = seed_users
+
+    # otherwise get new ids
+    ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=CRAWLED_IDS, user_df = USER_INFO)
 
     j = 0 
     num_failed = 0

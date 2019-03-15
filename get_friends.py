@@ -10,32 +10,16 @@ import pandas as pd
 import datetime
 
 import twitter_credentials
+from common_functions import *
 
-
-# SNA computer
-# OUTGOING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,0]
-# INCOMING_LINKS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/user-follower.csv", dtype=np.int64))[:,1]
-# INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
 
 # SECOND LEVEL SEEDS (SINCE COMPUTER RESTARTED, NEEDED TO ADJUST THIS)
 INPUT_IDS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/second_level_seeds.csv", dtype=np.int64))[:,0]
-
 CRAWLED_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_friends.csv", dtype=np.int64))[:,0]
 USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
 CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_friends.csv"
 USER_FOLLOWER_RELATIONSHIPS = "/mnt/sdb1/leslie_results/data/user-follower.csv"
-
 FAILED_IDS = "/mnt/sdb1/leslie_results/data/failed_ids.csv"
-
-#Leslie's Computer
-# OUTGOING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,0]
-# INCOMING_LINKS = np.array(pd.read_csv("/home/leslie/Desktop/SNA/user-follower.csv", dtype=np.int64))[:,1]
-# INPUT_IDS = np.concatenate((OUTGOING_LINKS, INCOMING_LINKS))
-# CRAWLED_IDS =  np.array(pd.read_csv("/home/leslie/Desktop/SNA/crawled_for_friends.csv", dtype=np.int64))[:,0]
-# USER_INFO = pd.read_csv("/home/leslie/Desktop/SNA/user.csv")
-# CRAWLED_ID_FILE = "/home/leslie/Desktop/SNA/crawled_for_friends.csv"
-# USER_FOLLOWER_RELATIONSHIPS = "/home/leslie/Desktop/SNA/user-follower.csv"
-# FAILED_IDS = "/home/leslie/Desktop/SNA/failed_ids.csv"
 
 
 # # # # TWITTER CLIENT # # # #
@@ -60,7 +44,7 @@ class TwitterClient():
         store_friend_ids = []
         for page in tweepy.Cursor(api.friends_ids, id=self.twitter_user).pages():
             store_friend_ids.extend(page)
-            print("page", page)
+            # print("page", page)
             print("Length of stored friend ids for this user:", len(store_friend_ids))
             time.sleep(60)
 
@@ -77,79 +61,6 @@ class TwitterAuthenticator():
         auth = OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
         auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKEN_SECRET)
         return(auth) 
-
-
-def dedupe_input_ids(new_ids, old_ids):
-    '''
-    Takes input ids and checks against the list of previously crawled ids to prevent crawling the same node twice.
-
-    Args: new ids to consider and old ids already crawled
-    Returns: list of IDs to crawl
-    '''
-    new_input_ids = set(new_ids)
-    previously_crawled_ids = set(old_ids)
-    ids_to_crawl = list(new_input_ids - previously_crawled_ids)
-
-    # convert to integer
-    for i in range(len(ids_to_crawl)):
-        ids_to_crawl[i] = np.int64(ids_to_crawl[i])
-
-    return(ids_to_crawl)
-
-
-def return_swiss_ids(input_ids, old_ids, user_df):
-    '''
-    Function to find which users are located in Switzerland. Make sure account isn't protected.
-
-    Args: input_ids should be the output from deduped list
-    Returns: list of ids that are in Switzerland and have not been crawled 
-    '''
-    ids_to_crawl = set(dedupe_input_ids(new_ids=input_ids, old_ids=old_ids))
-    swiss_places = ["svizzera", "switzerland", "schweiz", "suisse", "ch", "zurich", "bern", "geneva", "lausanne", "winterthur", "luzern", "st. gallen", "lugano", "basel", "biel", "bienne"]
-    
-    swiss_users_list = []
-
-    lang_df = user_df[user_df["lang"].isin(["en", "de", "fr", "it"])]
-    non_null_df = lang_df[-lang_df["location"].isna()]
-
-
-
-    
-    for user in non_null_df.index:
-        print(user)
-        loc = non_null_df["location"][user].lower()
-        tmp_loc = []
-        for i in range(len(swiss_places)):
-            tmp_loc.append(swiss_places[i] in loc)
-        if np.sum(np.array(tmp_loc)) > 0:
-            if non_null_df["protected"][user] == False:
-                swiss_users_list.append(non_null_df["id_str"][user])
-        
-    
-
-
-
-        # print   (np.sum(swiss_places[i] in loc for i in range(len(swiss_places))))
-        # for i in range(len(swiss_places)):
-            # print(swiss_places[i] in loc)
-            # if swiss_places[i] in non_null_df["location"][user].lower():  
-              # print(non_null_df["location"][user])
-        #         swiss_users_list.append(non_null_df["id"][user])
-        #         print(swiss_users_list)
-        # if np.sum([([swiss_places[i] in non_null_df["location"][user].lower()]) for i in range(len(swiss_places))]>0):
-        # if np.sum([([swiss_places[i] in non_null_df["location"][user].lower()]) for i in range(len(swiss_places))]>0):
-        #     print(non_null_df.iloc[user,:])
-
-
-    swiss_ids = set(swiss_users_list)
-    
-    print(swiss_ids)
-
-    new_swiss_ids = list(ids_to_crawl.intersection(swiss_ids))
-    for i in range(len(new_swiss_ids)):
-    	new_swiss_ids[i] = np.int64(new_swiss_ids[i])
-
-    return(new_swiss_ids)
 
 
 def crawl_friends(user):
@@ -184,7 +95,7 @@ if __name__ == '__main__':
 
     for i in range(len(ids_to_crawl)):
         id = ids_to_crawl[i]
-        print(id)
+        print("user_id:", id, "user location:", USER_INFO[USER_INFO["id_str"]==id]["location"])
         print(datetime.datetime.now())
         
         try:

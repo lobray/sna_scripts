@@ -7,77 +7,15 @@ import time
 import datetime
 
 import twitter_credentials
+from common_functions import *
 
 # specify whether you are looking for the tweet of a specific user, or a tweet of all the downloaded users
 SPECIFIC_ID = False
 ALL_IDS = True
 FILE = "/mnt/sdb1/leslie_results/data/user.csv"
-PREVIOUSLY_GOT_TWEETS = list(set(pd.read_csv("/mnt/sdb1/leslie_results/data/all_tweets.csv").iloc[:,0]))
+PREVIOUSLY_GOT_TWEETS = list(set(pd.read_csv("/mnt/sdb1/leslie_results/data/all_tweets.csv").iloc[:,0])) # this line is the problem
 USER_INFO = pd.read_csv(FILE)
 INPUT_IDS = USER_INFO.iloc[:,1]
-
-
-def dedupe_input_ids(new_ids, old_ids):
-    '''
-    Takes input ids and checks against the list of previously crawled ids to prevent crawling the same node twice.
-
-    Args: new ids to consider and old ids already crawled
-    Returns: list of IDs to crawl
-    '''
-    new_input_ids = set(new_ids)
-    previously_crawled_ids = set(old_ids)
-    ids_to_crawl = list(new_input_ids - previously_crawled_ids)
-
-    # convert to integer
-    for i in range(len(ids_to_crawl)):
-        print(ids_to_crawl[i])
-        try:
-            ids_to_crawl[i] = int(ids_to_crawl[i])
-        except:
-            pass
-
-    return(ids_to_crawl)
-
-def return_swiss_ids(input_ids, old_ids, user_df):
-    '''
-    Function to find which users are located in Switzerland, AND have posted at least one status.
-
-    Args: input_ids should be the output from deduped list
-    Returns: list of ids that are in Switzerland and have not been crawled 
-    '''
-    ids_to_crawl = set(dedupe_input_ids(new_ids=input_ids, old_ids=old_ids))
-    
-    swiss_places = ["svizzera", "switzerland", "schweiz", "suisse", "ch", "zurich", "bern", "geneva", "lausanne", "winterthur", "luzern", "st. gallen", "lugano", "basel", "biel", "bienne"]
-    
-    swiss_users_list = []
-
-    lang_df = user_df[user_df["lang"].isin(["en", "de", "fr", "it"])]
-    non_null_df = lang_df[-lang_df["location"].isna()]
-    
-    for user in non_null_df.index:
-        print(user)
-        loc = non_null_df["location"][user].lower()
-        tmp_loc = []
-        for i in range(len(swiss_places)):
-            tmp_loc.append(swiss_places[i] in loc)
-        if np.sum(np.array(tmp_loc)) > 0:
-            # add in extra condition that status count needs to be greater than zero
-            if non_null_df["statuses_count"][user] > 1:
-                # add in condition that tweets are not protected
-                if non_null_df["protected"][user] == False:
-                    swiss_users_list.append(non_null_df["id_str"][user])
-
-    swiss_ids = set(swiss_users_list)
-    
-    print(swiss_ids)
-
-    new_swiss_ids = list(ids_to_crawl.intersection(swiss_ids))
-    for i in range(len(new_swiss_ids)):
-        new_swiss_ids[i] = int(new_swiss_ids[i])
-
-    print("number of new swiss ids:", new_swiss_ids)
-
-    return(new_swiss_ids)
 
 
 def get_all_tweets(user_id):
