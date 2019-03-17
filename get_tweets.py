@@ -12,8 +12,8 @@ from common_functions import *
 # specify whether you are looking for the tweet of a specific user, or a tweet of all the downloaded users
 SPECIFIC_ID = False
 ALL_IDS = True
-FILE = "/mnt/sdb1/leslie_results/data/user.csv"
-PREVIOUSLY_GOT_TWEETS = list(set(pd.read_csv("/mnt/sdb1/leslie_results/data/all_tweets.csv").iloc[:,0])) # this line is the problem
+FILE = "/mnt/sdb1/leslie_results/data/user.csv" # LESLIE MAYBE CHANGE TO DOWNLOAD ONLY CONNECTIONS? 
+PREVIOUSLY_GOT_TWEETS = list(set(pd.read_csv(   "/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv").iloc[:,0])) # this line is the problem
 USER_INFO = pd.read_csv(FILE)
 INPUT_IDS = USER_INFO.iloc[:,1]
 
@@ -29,7 +29,6 @@ def get_all_tweets(user_id):
     auth = tweepy.OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
     auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth)
-          
     
     try:
 
@@ -61,12 +60,8 @@ def get_all_tweets(user_id):
             print("...%s tweets downloaded so far" % (len(alltweets)))
 
 
-        # outtweets = [[tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
-        full_tweets = [[str(user_id), tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
-
         
-        # outtweets = [[tweet.id_str, tweet.created_at, tweet.fulltext.encode("utf-8"), tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
-        # full_tweets = [[user_id, tweet.id_str, tweet.created_at, tweet.fulltext.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
+        full_tweets = [[str(user_id), tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8"), "", tweet.entities, tweet.retweet_count, tweet.favorite_count, tweet.place, tweet.coordinates] for tweet in alltweets]
 
         # extract hashtag and add into list
         for i in range(len(full_tweets)):
@@ -78,23 +73,22 @@ def get_all_tweets(user_id):
                     hashtag_list.append(new_hashtag)
 
                 full_tweets[i][4] = hashtag_list
-                # print(full_tweets[i][5]["hashtags"])
-
-
-        
-        # write the csv per user    
-        # with open('/mnt/sdb1/leslie_results/data/tweets/%s_tweets.csv' % user_id, 'wb') as f:
-        #     writer = csv.writer(f)
-        #     writer.writerow(["id_str", "created_at", "text", "entities", "retweet_count", "favorite_count", "place", "coordinates"])
-        #     writer.writerows(outtweets)
+                
+        user_id_string = str(user_id)
+        last_two_digits = user_id_string[-2:]
 
         #write the tweet file csv    
-        with open('/mnt/sdb1/leslie_results/data/all_tweets.csv', 'a+') as g:
+        with open('/mnt/sdb1/leslie_results/data/all_tweets_' + last_two_digits + '.csv', 'a+') as g:
             writer = csv.writer(g)
             writer.writerows(full_tweets)
+
+        with open('/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv', 'a+') as g:
+            writer = csv.writer(g)
+            writer.writerows(user_id_string)
     
     except:
         pass
+
 
 
 if __name__ == '__main__':
