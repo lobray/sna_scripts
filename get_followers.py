@@ -22,7 +22,8 @@ CRAWLED_IDS =  np.array(pd.read_csv(CRAWLED_ID_FILE, dtype=np.int64))[:,0]
 
 
 
-# # # # TWITTER CLIENT # # # #
+#### TWITTER CLIENT ####
+# (class methods from https://github.com/vprusso/youtube_tutorials/tree/master/twitter_python)
 class TwitterClient():
     def __init__(self, twitter_user=None):
         self.auth = TwitterAuthenticator().authenticate_twitter_app()
@@ -54,7 +55,7 @@ class TwitterClient():
         return(store_follower_ids)
 
 
-# # # # TWITTER AUTHENTICATER # # # #
+#### TWITTER AUTHENTICATER ####
 class TwitterAuthenticator():
 
     def authenticate_twitter_app(self):
