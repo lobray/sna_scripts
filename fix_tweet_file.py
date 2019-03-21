@@ -6,17 +6,13 @@ import json
 import time
 import datetime
 
-import twitter_credentials
-from common_functions import *
+# import twitter_credentials
+# from common_functions import *
 
-# HOME = "/mnt/sdb1/leslie_results/data/tweets/"
-# FILE = "/mnt/sdb1/leslie_results/data/all_tweets.csv"
+HOME = "/mnt/sdb1/leslie_results/data/tweets/"
+FILE = "/mnt/sdb1/leslie_results/data/all_tweets.csv"
+CRAWLED_FOR_TWEETS_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv"
 
-# my computer
-HOME = "/home/leslie/Desktop/SNA/tweets/"
-FILE = "/home/leslie/Desktop/SNA/tweets/all_tweets_27.csv"
-CRAWLED_FOR_TWEETS_FILE = HOME + "crawled_for_tweets.csv"
-ALL_TWEETS = HOME + "all_tweets.csv"
 # "/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv"
 
 
@@ -39,24 +35,46 @@ def create_files():
 def partition_tweets():
 
     all_ids = []
+    iteration = 0 
+    possible_values = list(np.arange(10,100))
+    zero_to_nine = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
 
-    with open(ALL_TWEETS) as f:
+    for i in range(len(possible_values)):
+        possible_values[i] = str(possible_values[i])
+
+    possible_values = zero_to_nine + possible_values
+    
+    
+
+    with open(FILE) as f:
         for line in f:
             
-            user_id = line.split(",", 1)[0]
-            identifier = user_id[-2:]
+            # print(iteration)
+            iteration += 1
 
-            if user_id == "user_id":
-                continue
-            else:
-                with open(HOME + "all_tweets_" + identifier + ".csv", 'ab+') as g:
-                    g.write(line)
+            try:
 
-                all_ids.append(user_id)
+                user_id = line.split(",", 1)[0]
+            
+                identifier = user_id[-2:]
+                print(iteration, identifier)
+
+                if user_id == "user_id":
+                    continue
+                
+                if identifier in possible_values:
+                    print(user_id)
+
+                    with open(HOME + "all_tweets_" + identifier + ".csv", 'a') as g:
+                        g.write(line)
+
+                    all_ids.append(user_id)
+            except:
+                print("some error")
 
     unique_ids = list(set(all_ids))
 
-    with open(CRAWLED_FOR_TWEETS_FILE, "a+") as g:
+    with open(CRAWLED_FOR_TWEETS_FILE, "a") as g:
         for i in unique_ids:
             g.write(i)
             g.write('\n')
@@ -66,4 +84,33 @@ def partition_tweets():
         # also needs to add the id to the crawled_for_tweets.csv file, if its not aleady in it.
 
 create_files()
-partition_tweets()
+# partition_tweets()
+
+def get_all_unique_users():
+    possible_values = list(np.arange(10,100))
+    zero_to_nine = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
+
+    for i in range(len(possible_values)):
+        possible_values[i] = str(possible_values[i])
+
+    possible_values = zero_to_nine + possible_values
+
+    for i in range(100):
+        all_ids = []
+
+        print(i)
+        
+        with open(HOME + "all_tweets_" + possible_values[i] + ".csv", 'rU') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                all_ids.append(row["user_id"])
+
+        all_ids = list(set(all_ids))
+        with open('/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv', 'a') as g:
+            writer = csv.writer(g)
+            writer.writerows(all_ids)
+        
+
+
+        
+# get_all_unique_users()

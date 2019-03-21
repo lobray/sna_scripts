@@ -14,7 +14,7 @@ from common_functions import *
 
 
 # SECOND LEVEL SEEDS (SINCE COMPUTER RESTARTED, NEEDED TO ADJUST THIS)
-INPUT_IDS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/second_level_seeds.csv", dtype=np.int64))[:,0]
+INPUT_IDS = np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/third_level_seeds_switzerland.csv", dtype=np.int64))[:,0]
 CRAWLED_IDS =  np.array(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_friends.csv", dtype=np.int64))[:,0]
 USER_INFO = pd.read_csv("/mnt/sdb1/leslie_results/data/user.csv")
 CRAWLED_ID_FILE = "/mnt/sdb1/leslie_results/data/crawled_for_friends.csv"
@@ -89,14 +89,15 @@ def crawl_friends(user):
 
 if __name__ == '__main__':
     
-    ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=CRAWLED_IDS, user_df = USER_INFO)
+    # ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=CRAWLED_IDS, user_df = USER_INFO)
     # ids_to_crawl = seed_users
+    ids_to_crawl = INPUT_IDS
 
     j = 0 
     num_failed = 0
 
     for i in range(len(ids_to_crawl)):
-        id = ids_to_crawl[i]
+        id = str(ids_to_crawl[i])
         print("user_id:", id, "user location:", USER_INFO[USER_INFO["id_str"]==id]["location"])
         print(datetime.datetime.now())
         

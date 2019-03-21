@@ -12,10 +12,11 @@ from common_functions import *
 # specify whether you are looking for the tweet of a specific user, or a tweet of all the downloaded users
 SPECIFIC_ID = False
 ALL_IDS = True
-FILE = "/mnt/sdb1/leslie_results/data/user.csv" # LESLIE MAYBE CHANGE TO DOWNLOAD ONLY CONNECTIONS? 
-PREVIOUSLY_GOT_TWEETS = list(set(pd.read_csv(   "/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv").iloc[:,0])) # this line is the problem
-USER_INFO = pd.read_csv(FILE)
-INPUT_IDS = USER_INFO.iloc[:,1]
+# FILE = "/mnt/sdb1/leslie_results/data/user.csv" # LESLIE MAYBE CHANGE TO DOWNLOAD ONLY CONNECTIONS? 
+FILE = "/mnt/sdb1/leslie_results/data/second_level_seeds_switzerland.csv"
+PREVIOUSLY_GOT_TWEETS = list(set(pd.read_csv("/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv").iloc[:,0])) # this line is the problem
+# USER_INFO = pd.read_csv(FILE)
+# INPUT_IDS = USER_INFO.iloc[:,1]
 
 
 def get_all_tweets(user_id):
@@ -77,17 +78,27 @@ def get_all_tweets(user_id):
         user_id_string = str(user_id)
         last_two_digits = user_id_string[-2:]
 
-        #write the tweet file csv    
-        with open('/mnt/sdb1/leslie_results/data/all_tweets_' + last_two_digits + '.csv', 'a+') as g:
-            writer = csv.writer(g)
-            writer.writerows(full_tweets)
+        possible_values = list(np.arange(10,100))
+        zero_to_nine = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
 
-        with open('/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv', 'a+') as g:
-            writer = csv.writer(g)
-            writer.writerows(user_id_string)
-    
+        for i in range(len(possible_values)):
+            possible_values[i] = str(possible_values[i])
+
+        possible_values = zero_to_nine + possible_values
+       
+
+        if last_two_digits in possible_values:
+        #write the tweet file csv    
+            with open('/mnt/sdb1/leslie_results/data/tweets/all_tweets_' + last_two_digits + '.csv', 'a') as g:
+                writer = csv.writer(g)
+                writer.writerows(full_tweets)
+
+            with open('/mnt/sdb1/leslie_results/data/crawled_for_tweets.csv', 'a') as g:
+                crawled = pd.DataFrame(data=[user_id_string])
+                crawled.to_csv(g, header=False, index=False)
+        
     except:
-        pass
+        print("except")
 
 
 
@@ -102,8 +113,12 @@ if __name__ == '__main__':
     if ALL_IDS == True:
         # get tweets for all downloaded users who have posted at least 1 tweet
 
-        ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=PREVIOUSLY_GOT_TWEETS, user_df = USER_INFO)
+        # can use this to get all tweets of swiss users
+        # ids_to_crawl = return_swiss_ids(input_ids=INPUT_IDS, old_ids=PREVIOUSLY_GOT_TWEETS, user_df = USER_INFO)
         
+        # or better, just get the tweets from our seed sets
+        ids_to_crawl = pd.read_csv(FILE).iloc[:,0]
+
         for i in range(len(ids_to_crawl)):
             current_user = np.int64(ids_to_crawl[i])
             print(i, len(ids_to_crawl), current_user)
