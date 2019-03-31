@@ -70,7 +70,7 @@ def return_swiss_ids(input_ids, old_ids, user_df):
             tmp_loc.append(swiss_places[i] in loc)
         if np.sum(np.array(tmp_loc)) > 0:
             if non_null_df["protected"][user] == False:
-                if "china" in loc:
+                if "china" in loc: # china and chicago were matching ", ch" so I manually remove them
                     continue
                 if "chicago" in loc:
                     continue
